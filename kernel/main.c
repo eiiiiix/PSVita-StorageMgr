@@ -108,6 +108,15 @@ typedef struct {
 #define UMA0_DEV "uma0:"
 #define UMA0_DEV2 "exfatuma0"
 #define UMA0_ID 0xF00
+#define VD0_DEV "vd0:"
+#define VD0_DEV2 "exfatvd0"
+#define VD0_ID 0x400
+#define VS0_DEV "vs0:"
+#define VS0_DEV2 "exfatvs0"
+#define VS0_ID 0x300
+#define BLANK0_DEV "blank0:"
+#define BLANK0_DEV2 "exfatblank0"
+#define BLANK0_ID 0x000
 #define MCD_BLKDEV "sdstor0:xmc-lp-ign-userext"
 #define MCD_BLKDEV2 NULL
 #define INT_BLKDEV "sdstor0:int-lp-ign-userext"
@@ -131,6 +140,14 @@ static SceIoDevice *grw0_ori_dev = NULL, *grw0_ori_dev2 = NULL;
 static SceIoDevice *uma0_ori_dev = NULL, *uma0_ori_dev2 = NULL;
 static SceIoDevice *imc0_ori_dev = NULL, *imc0_ori_dev2 = NULL;
 static SceIoDevice *xmc0_ori_dev = NULL, *xmc0_ori_dev2 = NULL;
+static SceIoDevice *sd0_ori_dev = NULL, *sd0_ori_dev2 = NULL;
+static SceIoDevice *os0_ori_dev = NULL, *os0_ori_dev2 = NULL;
+static SceIoDevice *pd0_ori_dev = NULL, *pd0_ori_dev2 = NULL;
+static SceIoDevice *sa0_ori_dev = NULL, *sa0_ori_dev2 = NULL;
+static SceIoDevice *ud0_ori_dev = NULL, *ud0_ori_dev2 = NULL;
+static SceIoDevice *vd0_ori_dev = NULL, *vd0_ori_dev2 = NULL;
+static SceIoDevice *vs0_ori_dev = NULL, *vs0_ori_dev2 = NULL;
+static SceIoDevice *blank0_ori_dev = NULL, *blank0_ori_dev2 = NULL;
 
 static SceIoDevice *tm0_prev_dev = NULL, *tm0_prev_dev2 = NULL;
 static SceIoDevice *ur0_prev_dev = NULL, *ur0_prev_dev2 = NULL;
@@ -140,6 +157,14 @@ static SceIoDevice *grw0_prev_dev = NULL, *grw0_prev_dev2 = NULL;
 static SceIoDevice *uma0_prev_dev = NULL, *uma0_prev_dev2 = NULL;
 static SceIoDevice *imc0_prev_dev = NULL, *imc0_prev_dev2 = NULL;
 static SceIoDevice *xmc0_prev_dev = NULL, *xmc0_prev_dev2 = NULL;
+static SceIoDevice *sd0_prev_dev = NULL, *sd0_prev_dev2 = NULL;
+static SceIoDevice *os0_prev_dev = NULL, *os0_prev_dev2 = NULL;
+static SceIoDevice *pd0_prev_dev = NULL, *pd0_prev_dev2 = NULL;
+static SceIoDevice *sa0_prev_dev = NULL, *sa0_prev_dev2 = NULL;
+static SceIoDevice *ud0_prev_dev = NULL, *ud0_prev_dev2 = NULL;
+static SceIoDevice *vd0_prev_dev = NULL, *vd0_prev_dev2 = NULL;
+static SceIoDevice *vs0_prev_dev = NULL, *vs0_prev_dev2 = NULL;
+static SceIoDevice *blank0_prev_dev = NULL, *blank0_prev_dev2 = NULL;
 
 int UMAuma0 = 0;
 
@@ -368,6 +393,14 @@ int isPartitionValid(const char* partition) {
 	|| !memcmp(partition, IMC0_DEV, strlen(IMC0_DEV))
 	|| !memcmp(partition, XMC0_DEV, strlen(XMC0_DEV))
 	|| !memcmp(partition, UMA0_DEV, strlen(UMA0_DEV)))
+	|| !memcmp(partition, SD0_DEV, strlen(SD0_DEV)))
+	|| !memcmp(partition, OS0_DEV, strlen(OS0_DEV)))
+	|| !memcmp(partition, UD0_DEV, strlen(UD0_DEV)))
+	|| !memcmp(partition, SA0_DEV, strlen(SA0_DEV)))
+	|| !memcmp(partition, PD0_DEV, strlen(PD0_DEV)))
+	|| !memcmp(partition, VD0_DEV, strlen(VD0_DEV)))
+	|| !memcmp(partition, VS0_DEV, strlen(VS0_DEV)))
+	|| !memcmp(partition, BLANK0_DEV, strlen(BLANK0_DEV)))
 		return 1;
 	LOG("Invalid partition : %s\n", partition);
 	return 0;
@@ -392,6 +425,22 @@ int getMountPointIdForPartition(const char* partition) {
 		return XMC0_ID;
 	if (!memcmp(partition, "uma0:", strlen("uma0:")))
 		return UMA0_ID;
+	if (!memcmp(partition, "sd0:", strlen("sd0:")))
+		return SD0_ID;
+	if (!memcmp(partition, "os0:", strlen("os0:")))
+		return OS0_ID;
+	if (!memcmp(partition, "ud0:", strlen("ud0:")))
+		return UD0_ID;
+	if (!memcmp(partition, "sa0:", strlen("sa0:")))
+		return SA0_ID; //secretly a sony guy who was a weeb inserting a SAO name for a partition?
+	if (!memcmp(partition, "pd0:", strlen("pd0:")))
+		return PD0_ID;
+	if (!memcmp(partition, "vd0:", strlen("vd0:")))
+		return VD0_ID;
+	if (!memcmp(partition, "vs0:", strlen("vs0:")))
+		return VS0_ID;
+	if (!memcmp(partition, "blank0:", strlen("blank0:")))
+		return BLANK0_ID;
 	return 0;
 }
 
@@ -413,6 +462,30 @@ int getPartitionForMountPointId(int mount_point_id, char** partition) {
 		return 1;
 	} else if (mount_point_id == XMC0_ID) {
 		*partition = XMC0_DEV;
+		return 1;
+	} else if (mount_point_id == SD0_ID) {
+		*partition = SD0_DEV;
+		return 1;
+	} else if (mount_point_id == OS0_ID) {
+		*partition = OS0_DEV;
+		return 1;
+	} else if (mount_point_id == UD0_ID) {
+		*partition = UD0_DEV;
+		return 1;
+	} else if (mount_point_id == SA0_ID) {
+		*partition = SA0_DEV;
+		return 1;
+	} else if (mount_point_id == PD0_ID) {
+		*partition = PD0_DEV;
+		return 1;
+	} else if (mount_point_id == VD0_ID) {
+		*partition = VD0_DEV;
+		return 1;
+	} else if (mount_point_id == VS0_ID) {
+		*partition = VS0_DEV;
+		return 1;
+	} else if (mount_point_id == BLANK0_ID) {
+		*partition = BLANK0_DEV;
 		return 1;
 	}
 	return 0;
