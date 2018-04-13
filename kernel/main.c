@@ -114,9 +114,33 @@ typedef struct {
 #define VS0_DEV "vs0:"
 #define VS0_DEV2 "exfatvs0"
 #define VS0_ID 0x300
-#define BLANK0_DEV "blank0:"
-#define BLANK0_DEV2 "exfatblank0"
-#define BLANK0_ID 0x000
+#define SDSTOR0_DEV "sdstor0:"
+#define SDSTOR0_DEV2 "sdstor_dev_fs"
+#define SDSTOR0_ID 0x1
+#define MD0_DEV "md0:"
+#define MD0_DEV2 "md_dev_fs"
+#define MD0_ID 0x2
+#define TTY0_DEV "tty0:"
+#define TTY0_DEV2 "dummy_ttyp_dev_fs"
+#define TTY0_ID 0x0
+#define LMA0_DEV "lma0:"
+#define LMA0_DEV2 "exfatlma0"
+#define LMA0_ID 0x10000
+#define LMB0_DEV "lmb0:"
+#define LMB0_DEV2 "exfatlmb0"
+#define LMB0_ID 0x20000
+#define LMC0_DEV "lmc0:"
+#define LMC0_DEV2 "exfatlmc0"
+#define LMC0_ID 0x30000
+#define LMD0_DEV "lmd0:"
+#define LMD0_DEV2 "exfatlmd0"
+#define LMD0_ID 0x40000
+#define MFA0_DEV "mfa0:"
+#define MFA0_DEV2 "exfatmfa0"
+#define MFA0_ID 0x50000
+#define MFB0_DEV "mfb0:"
+#define MFB0_DEV2 "exfatmfb"
+#define MFB0_ID 0x60000
 #define MCD_BLKDEV "sdstor0:xmc-lp-ign-userext"
 #define MCD_BLKDEV2 NULL
 #define INT_BLKDEV "sdstor0:int-lp-ign-userext"
@@ -147,7 +171,15 @@ static SceIoDevice *sa0_ori_dev = NULL, *sa0_ori_dev2 = NULL;
 static SceIoDevice *ud0_ori_dev = NULL, *ud0_ori_dev2 = NULL;
 static SceIoDevice *vd0_ori_dev = NULL, *vd0_ori_dev2 = NULL;
 static SceIoDevice *vs0_ori_dev = NULL, *vs0_ori_dev2 = NULL;
-static SceIoDevice *blank0_ori_dev = NULL, *blank0_ori_dev2 = NULL;
+static SceIoDevice *sdstor0_ori_dev = NULL, *sdstor0_ori_dev2 = NULL;
+static SceIoDevice *md0_ori_dev = NULL, *md0_ori_dev2 = NULL;
+static SceIoDevice *tty0_ori_dev = NULL, *tty0_ori_dev2 = NULL;
+static SceIoDevice *lma0_ori_dev = NULL, *lma0_ori_dev2 = NULL;
+static SceIoDevice *lmb0_ori_dev = NULL, *lmb0_ori_dev2 = NULL;
+static SceIoDevice *lmc0_ori_dev = NULL, *lmc0_ori_dev2 = NULL;
+static SceIoDevice *lmd0_ori_dev = NULL, *lmd0_ori_dev2 = NULL;
+static SceIoDevice *mfa0_ori_dev = NULL, *mfb0_ori_dev2 = NULL;
+static SceIoDevice *mfb0_ori_dev = NULL, *mfb0_ori_dev2 = NULL;
 
 static SceIoDevice *tm0_prev_dev = NULL, *tm0_prev_dev2 = NULL;
 static SceIoDevice *ur0_prev_dev = NULL, *ur0_prev_dev2 = NULL;
@@ -164,7 +196,15 @@ static SceIoDevice *sa0_prev_dev = NULL, *sa0_prev_dev2 = NULL;
 static SceIoDevice *ud0_prev_dev = NULL, *ud0_prev_dev2 = NULL;
 static SceIoDevice *vd0_prev_dev = NULL, *vd0_prev_dev2 = NULL;
 static SceIoDevice *vs0_prev_dev = NULL, *vs0_prev_dev2 = NULL;
-static SceIoDevice *blank0_prev_dev = NULL, *blank0_prev_dev2 = NULL;
+static SceIoDevice *sdstor0_prev_dev = NULL, *sdstor0_prev_dev2 = NULL;
+static SceIoDevice *md0_prev_dev = NULL, *md0_prev_dev2 = NULL;
+static SceIoDevice *tty0_prev_dev = NULL, *tty0_prev_dev2 = NULL;
+static SceIoDevice *lma0_prev_dev = NULL, *lma0_prev_dev2 = NULL;
+static SceIoDevice *lmb0_prev_dev = NULL, *lmb0_prev_dev2 = NULL;
+static SceIoDevice *lmc0_prev_dev = NULL, *lmc0_prev_dev2 = NULL;
+static SceIoDevice *lmd0_prev_dev = NULL, *lmd0_prev_dev2 = NULL;
+static SceIoDevice *mfa0_prev_dev = NULL, *mfb0_prev_dev2 = NULL;
+static SceIoDevice *mfb0_prev_dev = NULL, *mfb0_prev_dev2 = NULL;
 
 int UMAuma0 = 0;
 
@@ -392,15 +432,23 @@ int isPartitionValid(const char* partition) {
 	|| !memcmp(partition, GRW0_DEV, strlen(GRW0_DEV))
 	|| !memcmp(partition, IMC0_DEV, strlen(IMC0_DEV))
 	|| !memcmp(partition, XMC0_DEV, strlen(XMC0_DEV))
-	|| !memcmp(partition, UMA0_DEV, strlen(UMA0_DEV)))
-	|| !memcmp(partition, SD0_DEV, strlen(SD0_DEV)))
-	|| !memcmp(partition, OS0_DEV, strlen(OS0_DEV)))
-	|| !memcmp(partition, UD0_DEV, strlen(UD0_DEV)))
-	|| !memcmp(partition, SA0_DEV, strlen(SA0_DEV)))
-	|| !memcmp(partition, PD0_DEV, strlen(PD0_DEV)))
-	|| !memcmp(partition, VD0_DEV, strlen(VD0_DEV)))
-	|| !memcmp(partition, VS0_DEV, strlen(VS0_DEV)))
-	|| !memcmp(partition, BLANK0_DEV, strlen(BLANK0_DEV)))
+	|| !memcmp(partition, UMA0_DEV, strlen(UMA0_DEV))
+	|| !memcmp(partition, SD0_DEV, strlen(SD0_DEV))
+	|| !memcmp(partition, OS0_DEV, strlen(OS0_DEV))
+	|| !memcmp(partition, UD0_DEV, strlen(UD0_DEV))
+	|| !memcmp(partition, SA0_DEV, strlen(SA0_DEV))
+	|| !memcmp(partition, PD0_DEV, strlen(PD0_DEV))
+	|| !memcmp(partition, VD0_DEV, strlen(VD0_DEV))
+	|| !memcmp(partition, VS0_DEV, strlen(VS0_DEV))
+	|| !memcmp(partition, SDSTOR0_DEV, strlen(SDSTOR0_DEV))
+	|| !memcmp(partition, MD0_DEV, strlen(MD0_DEV))
+	|| !memcmp(partition, TTY0_DEV, strlen(TTY0_DEV))
+	|| !memcmp(partition, LMA0_DEV, strlen(LMA0_DEV))
+	|| !memcmp(partition, LMB0_DEV, strlen(LMB0_DEV))
+	|| !memcmp(partition, LMC0_DEV, strlen(LMC0_DEV))
+	|| !memcmp(partition, LMD0_DEV, strlen(LMD0_DEV))
+	|| !memcmp(partition, MFA0_DEV, strlen(MFA0_DEV))
+	|| !memcmp(partition, MFB0_DEV, strlen(MFB0_DEV)))
 		return 1;
 	LOG("Invalid partition : %s\n", partition);
 	return 0;
@@ -439,8 +487,24 @@ int getMountPointIdForPartition(const char* partition) {
 		return VD0_ID;
 	if (!memcmp(partition, "vs0:", strlen("vs0:")))
 		return VS0_ID;
-	if (!memcmp(partition, "blank0:", strlen("blank0:")))
-		return BLANK0_ID;
+	if (!memcmp(partition, "sdstor0:", strlen("sdstor0:")))
+		return SDSTOR0_ID;
+	if (!memcmp(partition, "md0:", strlen("md0:")))
+		return MD0_ID;
+	if (!memcmp(partition, "lma0:", strlen("lma0:")))
+		return LMA0_ID;
+	if (!memcmp(partition, "lmb0:", strlen("lmb0:")))
+		return LMB0_ID;
+	if (!memcmp(partition, "lmc0:", strlen("lmc0:")))
+		return LMC0_ID;
+	if (!memcmp(partition, "lmd0:", strlen("lmd0:")))
+		return LMD0_ID;
+	if (!memcmp(partition, "tty0:", strlen("tty0:")))
+		return TTY0_ID;
+	if (!memcmp(partition, "mfa0:", strlen("mfa0:")))
+		return MFA0_ID;
+	if (!memcmp(partition, "mfb0:", strlen("mfb0:")))
+		return MFB0_ID;
 	return 0;
 }
 
@@ -484,8 +548,32 @@ int getPartitionForMountPointId(int mount_point_id, char** partition) {
 	} else if (mount_point_id == VS0_ID) {
 		*partition = VS0_DEV;
 		return 1;
-	} else if (mount_point_id == BLANK0_ID) {
-		*partition = BLANK0_DEV;
+	} else if (mount_point_id == SDSTOR0_ID) {
+		*partition = SDSTOR0_DEV;
+		return 1;
+	} else if (mount_point_id == MB0_ID) {
+		*partition = MB0_DEV;
+		return 1;
+	} else if (mount_point_id == TTY0_ID) {
+		*partition = TTY0_DEV;
+		return 1;
+	} else if (mount_point_id == LMA0_ID) {
+		*partition = LMA0_DEV;
+		return 1;
+	} else if (mount_point_id == LMB0_ID) {
+		*partition = LMB0_DEV;
+		return 1;
+	} else if (mount_point_id == LMC0_ID) {
+		*partition = LMC0_DEV;
+		return 1;
+	} else if (mount_point_id == LMD0_ID) {
+		*partition = LMD0_DEV;
+		return 1;
+	} else if (mount_point_id == MFA0_ID) {
+		*partition = MFA0_DEV;
+		return 1;
+	} else if (mount_point_id == MFB0_ID) {
+		*partition = MFB0_DEV;
 		return 1;
 	}
 	return 0;
